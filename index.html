@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <script>
+        window.onload = function () {
+            var canvas = document.getElementsByTagName('canvas')[0],
+                ctx = canvas.getContext('2d')
+
+            canvas.width = window.innerWidth
+            canvas.height = window.innerHeight * 2
+
+            var img = new Image()
+
+            img.onload = function () {
+                ctx.drawImage(img, 0, 4)
+
+                var data = ctx.getImageData(0, 0, img.width, img.height).data
+
+                var rows = [],
+                    rowWidth = (data.length / img.width)
+                for (var i = 0; i < data.length; i += rowWidth) {
+                    rows.push(data.slice(i, i + rowWidth))
+                }
+
+                /*
+                    Psuedo-code and other information:
+                    
+                    rows.length == img.height
+                    rows[row].length == img.width * 4       # 4 because each pixel is 4bytes 
+                    
+                    for (row in rows)
+                        drawPixel(pixelIndex, row)  
+                    
+                
+                */
+
+                for (row in rows) {
+                    for (var pixel = 0; pixel < rows[row].length; pixel += 4) {
+                        // Iterate through every pixel in a row
+
+                        var rgba = 'rgba(' + /*rows[row][pixel]*/ 0 + ',' + rows[row][pixel + 1] + ',' + rows[row][pixel + 2] + ',' + rows[row][pixel + 3] + ')'
+
+                        ctx.beginPath()
+                        ctx.fillStyle = rgba
+                        ctx.fillRect(pixel / 4, (parseInt(row) + 40) + img.height, 1, 1)
+                        ctx.fill()
+                    }
+                }
+            }
+            img.src = 'bender.jpg'
+        }
+    </script>
+</head>
+
+<body>
+    <canvas></canvas>
+</body>
+
+</html>
