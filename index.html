@@ -3,18 +3,18 @@
 <html>
 
 <head>
-
     <script>
         window.onload = function () {
             var canvas = document.getElementsByTagName('canvas')[0],
                 ctx = canvas.getContext('2d')
 
-            canvas.width = window.innerWidth
+            canvas.width = window.innerWidth * 2
             canvas.height = window.innerHeight * 2
 
             var img = new Image()
 
             img.onload = function () {
+
                 ctx.drawImage(img, 0, 0)
 
                 var data = ctx.getImageData(0, 0, img.width, img.height).data
@@ -30,6 +30,8 @@
                 // We already have all the image data, so the original image can be removed from the canvas
                 ctx.clearRect(0, 0, img.width, img.height)
 
+                //                document.body.style.backgroundColor = 'rgba(' + rows[0][0] + ',' + rows[0][1] + ',' + rows[0][2] + ',' + rows[0][3] + ')'
+
                 for (row in rows) {
                     row = parseInt(row)
                         // Iterate through each row of pixel
@@ -41,15 +43,16 @@
                         // This draws our individual pixels
                         ctx.beginPath()
                         ctx.fillStyle = rgba
-                            //                        ctx.fillRect(pixel / 4, (1.4 * row), 1, 1)
-                        ctx.arc((pixel / 4), row, 4, 0, Math.PI * 2)
+                        var x = pixel / 4,
+                            y = row
+                        ctx.fillRect(x, y, Math.tan(x / y), Math.tan(x * y))
                         ctx.fill()
                     }
                 }
             }
 
             // Import the image to be drawn
-            img.src = 'bender.jpg'
+            img.src = 'boy.jpg'
         }
     </script>
 </head>

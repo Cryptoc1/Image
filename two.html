@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="https://cdn.rawgit.com/jonobr1/two.js/master/build/two.min.js"></script>
+    <script>
+        window.onload = function () {
+            // Even though we're using two.js, a raw canvas is needed for forming image data
+            var canvas = document.getElementsByTagName('canvas')[0],
+                ctx = canvas.getContext('2d')
+
+            canvas.width = window.innerWidth
+            canvas.height = window.innerHeight
+
+            var two = new Two({
+                fullscreen: true
+            }).appendTo(document.body)
+
+
+
+            /*
+            // two has convenience methods to create shapes.
+            var circle = two.makeCircle(72, 100, 50);
+            var rect = two.makeRectangle(213, 100, 100, 100);
+
+            // The object returned has many stylable properties:
+            circle.fill = '#FF8000';
+            circle.stroke = 'orangered'; // Accepts all valid css color
+            circle.linewidth = 5;
+
+            rect.fill = 'rgb(0, 200, 255)';
+            rect.opacity = 0.75;
+            rect.noStroke();
+
+            // Don't forget to tell two to render everything
+            // to the screen
+            two.update();
+            */
+
+
+
+            var img = new Image()
+
+            img.onload = function () {
+
+                ctx.drawImage(img, 0, 0)
+
+                var data = ctx.getImageData(0, 0, img.width, img.height).data
+
+                var rows = [],
+                    // Because each pixel in an image is represented by every 4bytes in the array
+                    rowWidth = (img.width * 4)
+
+                for (var i = 0; i < data.length; i += rowWidth) {
+                    rows.push(data.slice(i, i + rowWidth))
+                }
+
+                console.log("image loaded")
+
+                var rect
+                for (row in rows) {
+                    row = parseInt(row)
+                    for (var pixel = 0; pixel < rowWidth; pixel += 4) {
+                        var rgb = 'rgb(' + rows[row][pixel] + ',' + rows[row][pixel + 1] + ',' + rows[row][pixel + 2] + ')'
+                        rect = two.makeRectangle((pixel / 4), row, 1, 1);
+                        rect.fill = rgb
+                        rect.opacity = parseInt(rows[row][pixel + 3]) / 255
+                        rect.noStroke()
+                        two.update()
+                    }
+                }
+
+                /*for (row in rows) {
+                    row = parseInt(row)
+                        // Iterate through each row of pixel
+                    for (var pixel = 0; pixel < rows[row].length; pixel += 4) {
+                        // Iterate through every pixel in a row
+
+                        var rgb = 'rgb(' + rows[row][pixel] + ',' + rows[row][pixel + 1] + ',' + rows[row][pixel + 2] + ')'
+
+                        var rect = two.makeRectangle((pixel / 4), row, 1, 1);
+                        rect.fill = rgb
+                        rect.opacity = parseInt(rows[row][pixel + 3]) / 255
+                        rect.noStroke()
+                    }
+                }*/
+            }
+
+            // Import the image to be drawn
+            img.src = 'boy.jpg'
+        }
+    </script>
+</head>
+
+<body>
+    <canvas style="z-index:0;"></canvas>
+</body>
+
+</html>
