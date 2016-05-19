@@ -15,41 +15,40 @@
             var img = new Image()
 
             img.onload = function () {
-                ctx.drawImage(img, 0, 4)
+                ctx.drawImage(img, 0, 0)
 
                 var data = ctx.getImageData(0, 0, img.width, img.height).data
 
                 var rows = [],
-                    rowWidth = (data.length / img.width)
+                    // Because each pixel in an image is represented by every 4bytes in the array
+                    rowWidth = (img.width * 4)
+
                 for (var i = 0; i < data.length; i += rowWidth) {
                     rows.push(data.slice(i, i + rowWidth))
                 }
 
-                /*
-                    Psuedo-code and other information:
-                    
-                    rows.length == img.height
-                    rows[row].length == img.width * 4       # 4 because each pixel is 4bytes 
-                    
-                    for (row in rows)
-                        drawPixel(pixelIndex, row)  
-                    
-                
-                */
+                // We already have all the image data, so the original image can be removed from the canvas
+                ctx.clearRect(0, 0, img.width, img.height)
 
                 for (row in rows) {
+                    row = parseInt(row)
+                        // Iterate through each row of pixel
                     for (var pixel = 0; pixel < rows[row].length; pixel += 4) {
                         // Iterate through every pixel in a row
 
-                        var rgba = 'rgba(' + /*rows[row][pixel]*/ 0 + ',' + rows[row][pixel + 1] + ',' + rows[row][pixel + 2] + ',' + rows[row][pixel + 3] + ')'
+                        var rgba = 'rgba(' + rows[row][pixel] + ',' + rows[row][pixel + 1] + ',' + rows[row][pixel + 2] + ',' + rows[row][pixel + 3] + ')'
 
+                        // This draws our individual pixels
                         ctx.beginPath()
                         ctx.fillStyle = rgba
-                        ctx.fillRect(pixel / 4, (parseInt(row) + 40) + img.height, 1, 1)
+                            //                        ctx.fillRect(pixel / 4, (1.4 * row), 1, 1)
+                        ctx.arc((pixel / 4), row, 4, 0, Math.PI * 2)
                         ctx.fill()
                     }
                 }
             }
+
+            // Import the image to be drawn
             img.src = 'bender.jpg'
         }
     </script>
